@@ -84,16 +84,20 @@ io.on("connection", (socket) => {
       });
     }
     // Check correctness (if a correct answer was provided)
+
     if (qObj && qObj.correctAnswer) {
+      console.log("givenAnswer and correct answer",answer, qObj.correctAnswer)
       const normalizedStudentAns = answer.trim().toLowerCase();
       const normalizedCorrectAns = qObj.correctAnswer.trim().toLowerCase();
+    
       if (normalizedStudentAns === normalizedCorrectAns) {
         // Update student’s score
         const roomScoreboard = scoreboard.get(roomId) || {};
         roomScoreboard[userName] = (roomScoreboard[userName] || 0) + 1;
         scoreboard.set(roomId, roomScoreboard);
+     
         // Emit updated scoreboard to teacher and students
-        io.to(roomId).emit("update-scoreboard", roomScoreboard);
+        io.emit("update-scoreboard", roomScoreboard);
       }
     }
     // Also broadcast the answer as a submission (without revealing if it's right)
